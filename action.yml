@@ -1,0 +1,61 @@
+name: 'Zephr Share Secret'
+description: 'Zero-knowledge one-time secret sharing for CI pipelines'
+author: 'Zephr Technologies'
+
+branding:
+  icon: 'lock'
+  color: 'blue'
+
+inputs:
+  action:
+    description: 'Action to perform: create or retrieve'
+    required: true
+  secret:
+    description: 'Plaintext secret to encrypt (create mode)'
+    required: false
+  link:
+    description: 'Full Zephr link to retrieve (retrieve mode)'
+    required: false
+  api-key:
+    description: 'Zephr API key for authenticated requests'
+    required: false
+  hint:
+    description: 'Plaintext label for routing and audit logs'
+    required: false
+  expiry-minutes:
+    description: 'Expiry in minutes (5, 15, 30, 60, 1440, 10080, 43200)'
+    required: false
+    default: '60'
+  callback-url:
+    description: 'HTTPS webhook URL for consumption events'
+    required: false
+  callback-secret:
+    description: 'HMAC-SHA256 signing secret for webhook'
+    required: false
+  split:
+    description: 'If true, return URL and key as separate outputs instead of a single link'
+    required: false
+    default: 'false'
+  idempotency-key:
+    description: 'Caller-generated idempotency key for safe retries'
+    required: false
+
+outputs:
+  secret-link:
+    description: 'Full shareable link (create mode, standard)'
+  secret-url:
+    description: 'Secret URL without key (create mode, split)'
+  secret-key:
+    description: 'Encryption key (create mode, split)'
+  secret-id:
+    description: '22-char base64url secret identifier'
+  expires-at:
+    description: 'ISO 8601 expiration timestamp'
+  plaintext:
+    description: 'Decrypted secret (retrieve mode)'
+  hint:
+    description: 'Plaintext hint label'
+
+runs:
+  using: 'node22'
+  main: 'dist/index.js'
