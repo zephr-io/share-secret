@@ -28759,7 +28759,7 @@ async function runCreate() {
     const hint = core.getInput('hint') || undefined;
     const expiryStr = core.getInput('expiry-minutes');
     const expiry = expiryStr ? parseInt(expiryStr, 10) : 60;
-    const split = core.getInput('split') === 'true';
+    const split = core.getBooleanInput('split');
     const callbackUrl = core.getInput('callback-url') || undefined;
     const callbackSecret = core.getInput('callback-secret') || undefined;
     const idempotencyKey = core.getInput('idempotency-key') || undefined;
@@ -28768,6 +28768,7 @@ async function runCreate() {
     core.setSecret(secret);
     if (apiKey) core.setSecret(apiKey);
     if (callbackSecret) core.setSecret(callbackSecret);
+    if (idempotencyKey) core.setSecret(idempotencyKey);
 
     const VALID_EXPIRY_MINUTES = new Set([5, 15, 30, 60, 1440, 10080, 43200]);
     if (!VALID_EXPIRY_MINUTES.has(expiry)) {
@@ -28840,7 +28841,7 @@ async function runRetrieve() {
 
 async function main() {
     try {
-        const action = core.getInput('action', { required: true });
+        const action = core.getInput('action', { required: true }).trim();
 
         if (action === 'create') {
             await runCreate();
@@ -28850,7 +28851,7 @@ async function main() {
             core.setFailed(`Unknown action: "${action}". Use "create" or "retrieve".`);
         }
     } catch (error) {
-        core.setFailed(error.message);
+        core.setFailed(error instanceof Error ? error.message : String(error));
     }
 }
 
